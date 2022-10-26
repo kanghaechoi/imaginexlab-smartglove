@@ -14,7 +14,6 @@ def get_data(path):
     prev_dir = 0
     move_count = 1
 
-
     with open(path, "r") as f:
         line_count = 0
 
@@ -228,254 +227,138 @@ if __name__ == "__main__":
     if IS_DEBUG == "n":
         if RESEARCH_QUESTION == "q1":
             FEATURE_PICKLE_PATH = (
-                "./pickle/"
-                + RESEARCH_QUESTION
-                + "/"
-                + CLASS
-                + "_feature_norm.pickle"
+                "./pickle/" + RESEARCH_QUESTION + "/" + CLASS + "_feature_norm.pickle"
             )
             LABEL_PICKLE_PATH = (
-                "./pickle/"
-                + RESEARCH_QUESTION
-                + "/"
-                + CLASS
-                + "_label_norm.pickle"
+                "./pickle/" + RESEARCH_QUESTION + "/" + CLASS + "_label_norm.pickle"
             )
 
             path_hand = sorted(
-                glob.glob(
-                    "./data/" + RESEARCH_QUESTION + "/Hand_IMU_" + CLASS + "_*"
-                )
+                glob.glob("./data/" + RESEARCH_QUESTION + "/Hand_IMU_" + CLASS + "_*")
             )
             path_wrist = sorted(
-                glob.glob(
-                    "./data/" + RESEARCH_QUESTION + "/Wrist_IMU_" + CLASS + "_*"
-                )
+                glob.glob("./data/" + RESEARCH_QUESTION + "/Wrist_IMU_" + CLASS + "_*")
             )
             path_helical = sorted(
                 glob.glob(
-                    "./data/"
-                    + RESEARCH_QUESTION
-                    + "/Helical_IMU_"
-                    + CLASS
-                    + "_*"
+                    "./data/" + RESEARCH_QUESTION + "/Helical_IMU_" + CLASS + "_*"
                 )
             )
 
         if RESEARCH_QUESTION == "q2":
             FEATURE_PICKLE_PATH = (
-                "./pickle/"
-                + RESEARCH_QUESTION
-                + "/"
-                + CLASS
-                + "_feature_norm.pickle"
+                "./pickle/" + RESEARCH_QUESTION + "/" + CLASS + "_feature_norm.pickle"
             )
             LABEL_PICKLE_PATH = (
-                "./pickle/"
-                + RESEARCH_QUESTION
-                + "/"
-                + CLASS
-                + "_label_norm.pickle"
+                "./pickle/" + RESEARCH_QUESTION + "/" + CLASS + "_label_norm.pickle"
             )
 
             path_hand = sorted(
                 glob.glob(
-                    "./data/"
-                    + RESEARCH_QUESTION
-                    + "/Hand_IMU_20_"
-                    + CLASS
-                    + "_*"
+                    "./data/" + RESEARCH_QUESTION + "/Hand_IMU_20_" + CLASS + "_*"
                 )
             )
             path_wrist = sorted(
                 glob.glob(
-                    "./data/"
-                    + RESEARCH_QUESTION
-                    + "/Wrist_IMU_20_"
-                    + CLASS
-                    + "_*"
+                    "./data/" + RESEARCH_QUESTION + "/Wrist_IMU_20_" + CLASS + "_*"
                 )
             )
             path_helical = sorted(
                 glob.glob(
-                    "./data/"
-                    + RESEARCH_QUESTION
-                    + "/Helical_IMU_20"
-                    + CLASS
-                    + "_*"
+                    "./data/" + RESEARCH_QUESTION + "/Helical_IMU_20" + CLASS + "_*"
                 )
             )
 
         if RESEARCH_QUESTION == "q3":
             FEATURE_PICKLE_PATH = (
-                "./pickle/"
-                + RESEARCH_QUESTION
-                + "/"
-                + CLASS
-                + "_feature_norm.pickle"
+                "./pickle/" + RESEARCH_QUESTION + "/" + CLASS + "_feature_norm.pickle"
             )
             LABEL_PICKLE_PATH = (
-                "./pickle/"
-                + RESEARCH_QUESTION
-                + "/"
-                + CLASS
-                + "_label_norm.pickle"
+                "./pickle/" + RESEARCH_QUESTION + "/" + CLASS + "_label_norm.pickle"
             )
 
             path_hand = sorted(
                 glob.glob(
-                    "./data/"
-                    + RESEARCH_QUESTION
-                    + "/Hand_IMU_20_"
-                    + CLASS
-                    + "_*"
+                    "./data/" + RESEARCH_QUESTION + "/Hand_IMU_20_" + CLASS + "_*"
                 )
             )
             path_wrist = sorted(
                 glob.glob(
-                    "./data/"
-                    + RESEARCH_QUESTION
-                    + "/Wrist_IMU_20_"
-                    + CLASS
-                    + "_*"
+                    "./data/" + RESEARCH_QUESTION + "/Wrist_IMU_20_" + CLASS + "_*"
                 )
             )
             path_helical = sorted(
                 glob.glob(
-                    "./data/"
-                    + RESEARCH_QUESTION
-                    + "/Helical_IMU_20"
-                    + CLASS
-                    + "_*"
+                    "./data/" + RESEARCH_QUESTION + "/Helical_IMU_20" + CLASS + "_*"
                 )
             )
 
     if IS_DEBUG == "y":
         if RESEARCH_QUESTION == "q1":
             FEATURE_PICKLE_PATH = (
-                "../pickle/"
-                + RESEARCH_QUESTION
-                + "/"
-                + CLASS
-                + "_feature_norm.pickle"
+                "../pickle/" + RESEARCH_QUESTION + "/" + CLASS + "_feature_norm.pickle"
             )
             LABEL_PICKLE_PATH = (
-                "../pickle/"
-                + RESEARCH_QUESTION
-                + "/"
-                + CLASS
-                + "_label_norm.pickle"
+                "../pickle/" + RESEARCH_QUESTION + "/" + CLASS + "_label_norm.pickle"
             )
 
             path_hand = sorted(
-                glob.glob(
-                    "../data/" + RESEARCH_QUESTION + "/Hand_IMU_" + CLASS + "_*"
-                )
+                glob.glob("../data/" + RESEARCH_QUESTION + "/Hand_IMU_" + CLASS + "_*")
             )
             path_wrist = sorted(
-                glob.glob(
-                    "../data/"
-                    + RESEARCH_QUESTION
-                    + "/Wrist_IMU_"
-                    + CLASS
-                    + "_*"
-                )
+                glob.glob("../data/" + RESEARCH_QUESTION + "/Wrist_IMU_" + CLASS + "_*")
             )
             path_helical = sorted(
                 glob.glob(
-                    "../data/"
-                    + RESEARCH_QUESTION
-                    + "/Helical_IMU_"
-                    + CLASS
-                    + "_*"
+                    "../data/" + RESEARCH_QUESTION + "/Helical_IMU_" + CLASS + "_*"
                 )
             )
 
         if RESEARCH_QUESTION == "q2":
             FEATURE_PICKLE_PATH = (
-                "../pickle/"
-                + RESEARCH_QUESTION
-                + "/"
-                + CLASS
-                + "_feature_norm.pickle"
+                "../pickle/" + RESEARCH_QUESTION + "/" + CLASS + "_feature_norm.pickle"
             )
             LABEL_PICKLE_PATH = (
-                "../pickle/"
-                + RESEARCH_QUESTION
-                + "/"
-                + CLASS
-                + "_label_norm.pickle"
+                "../pickle/" + RESEARCH_QUESTION + "/" + CLASS + "_label_norm.pickle"
             )
 
             path_hand = sorted(
                 glob.glob(
-                    "../data/"
-                    + RESEARCH_QUESTION
-                    + "/Hand_IMU_20_"
-                    + CLASS
-                    + "_*"
+                    "../data/" + RESEARCH_QUESTION + "/Hand_IMU_20_" + CLASS + "_*"
                 )
             )
             path_wrist = sorted(
                 glob.glob(
-                    "../data/"
-                    + RESEARCH_QUESTION
-                    + "/Wrist_IMU_20_"
-                    + CLASS
-                    + "_*"
+                    "../data/" + RESEARCH_QUESTION + "/Wrist_IMU_20_" + CLASS + "_*"
                 )
             )
             path_helical = sorted(
                 glob.glob(
-                    "../data/"
-                    + RESEARCH_QUESTION
-                    + "/Helical_IMU_20_"
-                    + CLASS
-                    + "_*"
+                    "../data/" + RESEARCH_QUESTION + "/Helical_IMU_20_" + CLASS + "_*"
                 )
             )
 
         if RESEARCH_QUESTION == "q3":
             FEATURE_PICKLE_PATH = (
-                "../pickle/"
-                + RESEARCH_QUESTION
-                + "/"
-                + CLASS
-                + "_feature_norm.pickle"
+                "../pickle/" + RESEARCH_QUESTION + "/" + CLASS + "_feature_norm.pickle"
             )
             LABEL_PICKLE_PATH = (
-                "../pickle/"
-                + RESEARCH_QUESTION
-                + "/"
-                + CLASS
-                + "_label_norm.pickle"
+                "../pickle/" + RESEARCH_QUESTION + "/" + CLASS + "_label_norm.pickle"
             )
 
             path_hand = sorted(
                 glob.glob(
-                    "../data/"
-                    + RESEARCH_QUESTION
-                    + "/Hand_IMU_20_"
-                    + CLASS
-                    + "_*"
+                    "../data/" + RESEARCH_QUESTION + "/Hand_IMU_20_" + CLASS + "_*"
                 )
             )
             path_wrist = sorted(
                 glob.glob(
-                    "../data/"
-                    + RESEARCH_QUESTION
-                    + "/Wrist_IMU_20_"
-                    + CLASS
-                    + "_*"
+                    "../data/" + RESEARCH_QUESTION + "/Wrist_IMU_20_" + CLASS + "_*"
                 )
             )
             path_helical = sorted(
                 glob.glob(
-                    "../data/"
-                    + RESEARCH_QUESTION
-                    + "/Helical_IMU_20_"
-                    + CLASS
-                    + "_*"
+                    "../data/" + RESEARCH_QUESTION + "/Helical_IMU_20_" + CLASS + "_*"
                 )
             )
 
@@ -541,4 +424,3 @@ if __name__ == "__main__":
         pickle.dump(labels, f, pickle.HIGHEST_PROTOCOL)
 
     print(CLASS + "'s features are extracted...")
-
