@@ -1,13 +1,47 @@
-from utilities.path import Path
+from typing import Union
+
+from utilities.fetch import Fetch
+from utilities.dataset import Dataset
 from utilities.read import Read
 
 if __name__ == "__main__":
-    research_question1_20s_path_instance = Path(1, 20)
-    research_question1_20s_zipped_paths = research_question1_20s_path_instance.zip()
-    for hand_path, wrist_path, helical_path in research_question1_20s_zipped_paths:
-        reader = Read()
+    selected_question = input(
+        "Please select research question.\n(1) Research Question 1\n(2) Research Question 2\n(3) Research Question 3\nPress [Ctrl + C] to exit this program.\n"
+    )
+    selected_question = int(selected_question)
 
-        breakpoint()
-        hand_data = reader.read(hand_path)
-        breakpoint()
-    _20s_helical_read = Read(1, "Helical", 20)
+    age_20s: int = 20
+    age_50s: int = 50
+    age_70s: int = 70
+
+    is_not_authorized = 0
+    is_authorized = 1
+
+    if selected_question == 1:
+        ages = [age_20s, age_50s, age_70s]
+        authentication_classes = None
+        authentication_flag = False
+    elif selected_question == 2 or selected_question == 3:
+        ages = [age_20s]
+        authentication_classes = [is_authorized, is_not_authorized]
+        authentication_flag = True
+    else:
+        raise ValueError
+
+    fetch = Fetch(selected_question, ages, authentication_flag, authentication_classes)
+    data_chunks: zip = fetch.fetch_chunks()
+
+    sample_length: int = 150
+    dataset = Dataset(
+        selected_question,
+        ages,
+        data_chunks,
+        sample_length,
+        authentication_classes,
+    )
+    features = dataset.create_dataset()
+
+    breakpoint()
+
+    if KeyboardInterrupt:
+        exit(0)
