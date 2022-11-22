@@ -1,11 +1,11 @@
-from typing import Optional
+from typing import Optional, Tuple
 
 import numpy as np
 
 from scipy import integrate
 
 
-class Dataset:
+class Extraction:
     def __init__(
         self,
         _research_question: int,
@@ -53,9 +53,9 @@ class Dataset:
 
         return array
 
-    def create_dataset(self) -> np.ndarray:
+    def extract_dataset(self) -> Tuple[np.ndarray, np.ndarray]:
         is_first_label_stack: bool = True
-        is_first_dataset: bool = True
+        is_first_feature_stack_major: bool = True
 
         for chunk_index, (hand_data, wrist_data, helical_data, labels) in enumerate(
             self.data_chunks
@@ -73,7 +73,7 @@ class Dataset:
                 _labels = np.ones((number_of_samples, 1)) * labels
                 labels_stack = np.concatenate((labels_stack, _labels), axis=0)
 
-            is_first_feature_stack: bool = True
+            is_first_feature_stack_minor: bool = True
 
             for sample_index in range(number_of_samples):
                 hand_array = np.array(hand_data[sample_index]).astype(float)
@@ -213,14 +213,14 @@ class Dataset:
                     )
                 )
 
-                if is_first_feature_stack is True:
-                    feature_stack = feature
-                    is_first_feature_stack = False
+                if is_first_feature_stack_minor is True:
+                    feature_stack_minor = feature
+                    is_first_feature_stack_minor = False
                 else:
-                    feature_stack = np.dstack((feature_stack, feature))
+                    feature_stack_minor = np.dstack((feature_stack_minor, feature))
 
                 if sample_index == number_of_samples - 1:
-                    is_first_feature_stack = True
+                    is_first_feature_stack_minor = True
 
                 print(
                     "Subject {:d}'s {:d} feature is add.".format(
@@ -229,12 +229,14 @@ class Dataset:
                     )
                 )
 
-            if is_first_dataset is True:
-                feature_dataset = feature_stack
-                is_first_dataset = False
+            if is_first_feature_stack_major is True:
+                feature_stack_major = feature_stack_minor
+                is_first_feature_stack_major = False
             else:
-                feature_dataset = np.dstack((feature_dataset, feature_stack))
+                feature_stack_major = np.dstack(
+                    (feature_stack_major, feature_stack_minor)
+                )
 
             print("***Subject {:d}'s feature stack is added.".format(chunk_index))
 
-        return feature_dataset, labels_stack
+        return feature_stack_major, labels_stack

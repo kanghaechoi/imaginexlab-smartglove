@@ -1,7 +1,11 @@
 from typing import Union
 
+from dataset.dimension import Dimension
+from dataset.normalization import MinMaxNormalization
+from dataset.type_conversion import Tensor
+
 from utilities.fetch import Fetch
-from utilities.dataset import Dataset
+from dataset.extraction import Extraction
 from utilities.read import Read
 
 if __name__ == "__main__":
@@ -32,14 +36,40 @@ if __name__ == "__main__":
     data_chunks: zip = fetch.fetch_chunks()
 
     sample_length: int = 150
-    dataset = Dataset(
+    extraction = Extraction(
         selected_question,
         ages,
         data_chunks,
         sample_length,
         authentication_classes,
     )
-    features = dataset.create_dataset()
+    features, labels = extraction.extract_dataset()
+
+    features_depth = features.shape[2]
+    features_width = features.shape[1]
+    features_height = features.shape[0]
+
+    dimension = Dimension()
+    if selected_question == 2 or selected_question == 3:
+        features = dimension.numpy_squeeze(
+            features,
+            features_depth,
+            features_width,
+            features_height,
+        )
+
+    normalization = MinMaxNormalization(features)
+    normalized_features = normalization.transform(features)
+
+    normalized_features = dimension.numpy_unsqueeze(
+        normalized_features,
+        features_depth,
+        features_width,
+        features_height,
+    )
+
+    type_conversion = Tensor()
+    normalized_features_as_tensor = type_conversion.array_to_tensor(normalized_features)
 
     breakpoint()
 

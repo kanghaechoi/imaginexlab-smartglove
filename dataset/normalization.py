@@ -10,9 +10,9 @@ class Normalization:
         self.scaler = scaler.fit(X)
 
     def transform(self, X: np.ndarray) -> np.ndarray:
-        transformed_X = self.scaler.transform(X)
+        normalized_array = self.scaler.transform(X)
 
-        return transformed_X
+        return normalized_array
 
     def mean(self) -> np.ndarray:
         _mean = self.scaler.mean_
@@ -28,6 +28,6 @@ class Normalization:
 
 class MinMaxNormalization(Normalization):
     def __init__(self, X: np.ndarray) -> None:
-        super().__init__()
+        super().__init__(X)
         scaler = MinMaxScaler()
         self.scaler = scaler.fit(X)
