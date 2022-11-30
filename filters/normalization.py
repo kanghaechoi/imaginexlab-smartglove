@@ -5,12 +5,12 @@ from sklearn.preprocessing import StandardScaler
 
 
 class Normalization:
-    def __init__(self, X: np.ndarray) -> None:
+    def __init__(self, _features: np.ndarray) -> None:
         scaler = StandardScaler()
-        self.scaler = scaler.fit(X)
+        self.scaler = scaler.fit(_features)
 
-    def transform(self, X: np.ndarray) -> np.ndarray:
-        normalized_array = self.scaler.transform(X)
+    def transform(self, _features: np.ndarray) -> np.ndarray:
+        normalized_array = self.scaler.transform(_features)
 
         return normalized_array
 
@@ -27,7 +27,7 @@ class Normalization:
 
 
 class MinMaxNormalization(Normalization):
-    def __init__(self, X: np.ndarray) -> None:
-        super().__init__(X)
+    def __init__(self, _features: np.ndarray) -> None:
+        super().__init__(_features)
         scaler = MinMaxScaler()
-        self.scaler = scaler.fit(X)
+        self.scaler = scaler.fit(_features)

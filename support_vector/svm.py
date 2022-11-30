@@ -12,11 +12,11 @@ class SVM:
     def build_pipeline(self, scaler) -> None:
         self.classifier = make_pipeline(scaler, self.model)
 
-    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
-        self.classifier.fit(X, y)
+    def fit(self, _features: np.ndarray, _labels: np.ndarray) -> None:
+        self.classifier.fit(_features, _labels)
 
-    def predict(self, X: np.ndarray) -> np.ndarray:
-        predicted_y = self.classifier.predict(X)
+    def predict(self, _features: np.ndarray) -> np.ndarray:
+        predicted_y = self.classifier.predict(_features)
 
         return predicted_y
 
