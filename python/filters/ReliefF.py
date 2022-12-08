@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 Copyright (c) 2016 Randal S. Olson
 
@@ -78,15 +76,16 @@ class ReliefF(object):
 
         for source_index in range(X.shape[0]):
             distances, indices = self.tree.query(
-                X[source_index].reshape(1, -1), k=self.n_neighbors+1)
+                X[source_index].reshape(1, -1), k=self.n_neighbors + 1
+            )
 
             # Nearest neighbor is self, so ignore first match
             indices = indices[0][1:]
 
             # Create a binary array that is 1 when the source and neighbor
             #  match and -1 everywhere else, for labels and features..
-            labels_match = np.equal(y[source_index], y[indices]) * 2. - 1.
-            features_match = np.equal(X[source_index], X[indices]) * 2. - 1.
+            labels_match = np.equal(y[source_index], y[indices]) * 2.0 - 1.0
+            features_match = np.equal(X[source_index], X[indices]) * 2.0 - 1.0
 
             # The change in feature_scores is the dot product of these  arrays
             self.feature_scores += np.dot(features_match.T, labels_match)
@@ -107,7 +106,7 @@ class ReliefF(object):
             Reduced feature matrix
 
         """
-        return X[:, self.top_features[:self.n_features_to_keep]]
+        return X[:, self.top_features[: self.n_features_to_keep]]
 
     def fit_transform(self, X, y):
         """Computes the feature importance scores from the training data, then
