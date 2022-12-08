@@ -1,8 +1,8 @@
 from typing import Union
 
-from filters.dimension import Dimension
+from python.utilities.dimension import Dimension
 from filters.normalization import MinMaxNormalization
-from filters.type_conversion import Tensor
+from python.type.as_tensor import AsTensor
 
 from utilities.fetch import Fetch
 from filters.extraction import Extraction
@@ -72,7 +72,7 @@ if __name__ == "__main__":
         features_height,
     )
 
-    type_conversion = Tensor()
+    type_conversion = AsTensor()
     normalized_features_as_tensor = type_conversion.array_to_tensor(normalized_features)
 
     breakpoint()

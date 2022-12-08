@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 
 
-class Tensor:
+class AsTensor:
     def __init__(self) -> None:
         pass
 

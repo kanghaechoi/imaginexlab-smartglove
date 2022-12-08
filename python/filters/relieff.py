@@ -17,7 +17,6 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
-from __future__ import print_function
 import numpy as np
 from sklearn.neighbors import KDTree
 
@@ -33,7 +32,7 @@ class ReliefF(object):
 
     """
 
-    def __init__(self, n_neighbors=100, n_features_to_keep=10):
+    def __init__(self, n_neighbors: int = 100, n_features_to_keep: int = 10) -> None:
         """Sets up ReliefF to perform feature selection.
 
         Parameters
@@ -55,7 +54,7 @@ class ReliefF(object):
         self.n_neighbors = n_neighbors
         self.n_features_to_keep = n_features_to_keep
 
-    def fit(self, X, y):
+    def fit(self, features: np.ndarray, labels: np.ndarray) -> None:
         """Computes the feature importance scores from the training data.
 
         Parameters
@@ -71,12 +70,12 @@ class ReliefF(object):
         None
 
         """
-        self.feature_scores = np.zeros(X.shape[1])
-        self.tree = KDTree(X)
+        self.feature_scores = np.zeros(features.shape[1])
+        self.tree = KDTree(features)
 
-        for source_index in range(X.shape[0]):
+        for source_index in range(features.shape[0]):
             distances, indices = self.tree.query(
-                X[source_index].reshape(1, -1), k=self.n_neighbors + 1
+                features[source_index].reshape(1, -1), k=self.n_neighbors + 1
             )
 
             # Nearest neighbor is self, so ignore first match
@@ -84,15 +83,17 @@ class ReliefF(object):
 
             # Create a binary array that is 1 when the source and neighbor
             #  match and -1 everywhere else, for labels and features..
-            labels_match = np.equal(y[source_index], y[indices]) * 2.0 - 1.0
-            features_match = np.equal(X[source_index], X[indices]) * 2.0 - 1.0
+            labels_match = np.equal(labels[source_index], labels[indices]) * 2.0 - 1.0
+            features_match = (
+                np.equal(features[source_index], features[indices]) * 2.0 - 1.0
+            )
 
             # The change in feature_scores is the dot product of these  arrays
             self.feature_scores += np.dot(features_match.T, labels_match)
 
         self.top_features = np.argsort(self.feature_scores)[::-1]
 
-    def transform(self, X):
+    def transform(self, features: np.ndarray) -> np.ndarray:
         """Reduces the feature set down to the top `n_features_to_keep` features.
 
         Parameters
@@ -106,9 +107,9 @@ class ReliefF(object):
             Reduced feature matrix
 
         """
-        return X[:, self.top_features[: self.n_features_to_keep]]
+        return features[:, self.top_features[: self.n_features_to_keep]]
 
-    def fit_transform(self, X, y):
+    def fit_transform(self, features: np.ndarray, labels: np.ndarray) -> np.ndarray:
         """Computes the feature importance scores from the training data, then
         reduces the feature set down to the top `n_features_to_keep` features.
 
@@ -125,5 +126,6 @@ class ReliefF(object):
             Reduced feature matrix
 
         """
-        self.fit(X, y)
-        return self.transform(X)
+        self.fit(features, labels)
+
+        return self.transform(features)
