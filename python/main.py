@@ -1,12 +1,11 @@
-from typing import Union
-
-from python.utilities.dimension import Dimension
-from filters.normalization import MinMaxNormalization
-from python.type.as_tensor import AsTensor
-
-from utilities.fetch import Fetch
 from filters.extraction import Extraction
+from filters.normalization import MinMaxNormalization
+from filters.relieff import ReliefF
+from utilities.dimension import Dimension
+from utilities.fetch import Fetch
 from utilities.read import Read
+from type.as_tensor import AsTensor
+
 
 if __name__ == "__main__":
     print("======================")
@@ -70,6 +69,18 @@ if __name__ == "__main__":
         features_depth,
         features_width,
         features_height,
+    )
+
+    breakpoint()
+
+    number_of_feature_reduction = input(
+        "Please insert number of features to be reduced."
+    )
+    number_of_feature_reduction = int(number_of_feature_reduction)
+
+    relieff = ReliefF(
+        n_neighbors=normalized_features.shape[2],
+        n_features_to_keep=normalized_features.shape[2] - number_of_feature_reduction,
     )
 
     type_conversion = AsTensor()
