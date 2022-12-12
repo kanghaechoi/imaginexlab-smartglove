@@ -11,4 +11,5 @@ class Division:
         self,
         features: np.ndarray,
     ) -> Tuple[np.ndarray, np.ndarray]:
+        number_of_data = features.shape[0]
         pass
