@@ -67,10 +67,10 @@ class Extraction:
             )
 
             if is_first_labelset is True:
-                labelset = np.ones((number_of_samples, 1)) * labels
+                labelset = np.ones((number_of_samples, 1), dtype=int) * labels
                 is_first_labelset = False
             else:
-                _labels = np.ones((number_of_samples, 1)) * labels
+                _labels = np.ones((number_of_samples, 1), dtype=int) * labels
                 labelset = np.concatenate((labelset, _labels), axis=0)
 
             is_first_feature_stack: bool = True

@@ -1,15 +1,15 @@
 import tensorflow as tf
 
 
-loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+loss_object = tf.keras.losses.BinaryCrossentropy()
 
 optimizer = tf.keras.optimizers.Adam()
 
-train_loss = tf.keras.metrics.Mean(name="train_loss")
-train_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(name="train_accuracy")
+train_loss = tf.keras.metrics.BinaryCrossentropy(name="train_loss")
+train_accuracy = tf.keras.metrics.BinaryAccuracy(name="train_accuracy")
 
-test_loss = tf.keras.metrics.Mean(name="test_loss")
-test_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(name="test_accuracy")
+test_loss = tf.keras.metrics.BinaryCrossentropy(name="test_loss")
+test_accuracy = tf.keras.metrics.BinaryAccuracy(name="test_accuracy")
 
 
 class NNTraining:
@@ -24,13 +24,14 @@ class NNTraining:
         self.epochs = epochs
 
     @tf.function
-    def train_step(self, data: tf.Tensor, labels: tf.Tensor):
+    def training_step(self, data: tf.Tensor, labels: tf.Tensor):
         with tf.GradientTape() as tape:
             # training=True is only needed if there are layers with different
             # behavior during training versus inference (e.g. Dropout).
-            breakpoint()
             predictions = self.model(data, training=True)
+            breakpoint()
             loss = loss_object(labels, predictions)
+
         gradients = tape.gradient(loss, self.model.trainable_variables)
         optimizer.apply_gradients(zip(gradients, self.model.trainable_variables))
 
@@ -48,6 +49,8 @@ class NNTraining:
         test_accuracy(labels, predictions)
 
     def train_model(self, training_data, training_labels) -> None:
+        training_one_hot_labels = tf.one_hot(tf.squeeze(training_labels), 2)
+
         for epoch in range(self.epochs):
             # Reset the metrics at the start of the next epoch
             train_loss.reset_states()
@@ -55,8 +58,10 @@ class NNTraining:
             test_loss.reset_states()
             test_accuracy.reset_states()
 
+            training_data = training_data[0:12]
+            training_one_hot_labels = training_one_hot_labels[0:12]
             # for training_data, training_labels in zip(training_data, training_labels):
-            self.train_step(training_data, training_labels)
+            self.training_step(training_data, training_one_hot_labels)
 
             # for test_images, test_labels in test_ds:
             #     test_step(test_images, test_labels)
