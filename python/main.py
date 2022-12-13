@@ -128,7 +128,8 @@ if __name__ == "__main__":
     test_labels_as_tensor = as_tensor.array_to_tensor(test_labels)
 
     breakpoint()
-    nn_model = ResNet50([3, 4, 6, 3], 2)
+    resnet50_block_parameters = [3, 4, 6, 3]
+    nn_model = ResNet50(resnet50_block_parameters, 2)
     nn_training = NNTraining(nn_model)
     nn_training.train_model(training_data_as_tensor, training_labels_as_tensor)
 
