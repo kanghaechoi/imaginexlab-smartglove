@@ -54,7 +54,7 @@ class ReliefF(object):
         self.n_neighbors = n_neighbors
         self.n_features_to_keep = n_features_to_keep
 
-    def fit(self, features: np.ndarray, labels: np.ndarray) -> None:
+    def fit(self, data: np.ndarray, labels: np.ndarray) -> None:
         """Computes the feature importance scores from the training data.
 
         Parameters
@@ -70,12 +70,12 @@ class ReliefF(object):
         None
 
         """
-        self.feature_scores = np.zeros(features.shape[1])
-        self.tree = KDTree(features)
+        self.feature_scores = np.zeros(data.shape[1])
+        self.tree = KDTree(data)
 
-        for source_index in range(features.shape[0]):
+        for source_index in range(data.shape[0]):
             distances, indices = self.tree.query(
-                features[source_index].reshape(1, -1), k=self.n_neighbors + 1
+                data[source_index].reshape(1, -1), k=self.n_neighbors + 1
             )
 
             # Nearest neighbor is self, so ignore first match
@@ -84,16 +84,14 @@ class ReliefF(object):
             # Create a binary array that is 1 when the source and neighbor
             #  match and -1 everywhere else, for labels and features..
             labels_match = np.equal(labels[source_index], labels[indices]) * 2.0 - 1.0
-            features_match = (
-                np.equal(features[source_index], features[indices]) * 2.0 - 1.0
-            )
+            features_match = np.equal(data[source_index], data[indices]) * 2.0 - 1.0
 
             # The change in feature_scores is the dot product of these  arrays
             self.feature_scores += np.dot(features_match.T, labels_match)
 
         self.top_features = np.argsort(self.feature_scores)[::-1]
 
-    def transform(self, features: np.ndarray) -> np.ndarray:
+    def transform(self, data: np.ndarray) -> np.ndarray:
         """Reduces the feature set down to the top `n_features_to_keep` features.
 
         Parameters
@@ -107,9 +105,9 @@ class ReliefF(object):
             Reduced feature matrix
 
         """
-        return features[:, self.top_features[: self.n_features_to_keep]]
+        return data[:, self.top_features[: self.n_features_to_keep]]
 
-    def fit_transform(self, features: np.ndarray, labels: np.ndarray) -> np.ndarray:
+    def fit_transform(self, data: np.ndarray, labels: np.ndarray) -> np.ndarray:
         """Computes the feature importance scores from the training data, then
         reduces the feature set down to the top `n_features_to_keep` features.
 
@@ -126,6 +124,6 @@ class ReliefF(object):
             Reduced feature matrix
 
         """
-        self.fit(features, labels)
+        self.fit(data, labels)
 
-        return self.transform(features)
+        return self.transform(data)

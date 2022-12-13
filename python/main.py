@@ -1,4 +1,5 @@
-from filters.extraction import Extraction
+from dataset.extraction import Extraction
+from dataset.divide import Divide
 from filters.normalization import MinMaxNormalization
 from filters.relieff import ReliefF
 from utilities.dimension import Dimension
@@ -6,6 +7,10 @@ from utilities.fetch import Fetch
 from utilities.read import Read
 from type.as_tensor import AsTensor
 
+from neural_networks.resnet import ResNet50
+from neural_networks.nn_training import NNTraining
+
+import numpy as np
 
 if __name__ == "__main__":
     print("======================")
@@ -17,6 +22,9 @@ if __name__ == "__main__":
     )
     research_question = int(research_question)
 
+    """
+    Data fetch configuration
+    """
     age_20s: int = 20
     age_50s: int = 50
     age_70s: int = 70
@@ -35,6 +43,9 @@ if __name__ == "__main__":
     else:
         raise ValueError
 
+    """
+    Data fetch
+    """
     fetch = Fetch(research_question, ages, authentication_flag, authentication_classes)
     data_chunks: zip = fetch.fetch_chunks()
 
@@ -46,45 +57,79 @@ if __name__ == "__main__":
         sample_length,
         authentication_classes,
     )
-    features, labels = extraction.extract_dataset()
+    data, labels = extraction.extract_dataset()
 
-    features_depth = features.shape[2]
-    features_width = features.shape[1]
-    features_height = features.shape[0]
+    data_depth: int = data.shape[2]
+    data_width: int = data.shape[1]
+    data_height: int = data.shape[0]
 
+    """
+    Array dimension manipulation (Temporal)
+    """
     dimension = Dimension()
     if research_question == 2 or research_question == 3:
-        features = dimension.numpy_squeeze(
-            features,
-            features_depth,
-            features_width,
-            features_height,
+        data = dimension.numpy_squeeze(
+            data,
+            data_depth,
+            data_width,
+            data_height,
         )
 
-    normalization = MinMaxNormalization(features)
-    normalized_features = normalization.transform(features)
+    """
+    Feature Normalization
+    """
+    normalization = MinMaxNormalization(data)
+    normalized_data = normalization.transform(data)
 
-    normalized_features = dimension.numpy_unsqueeze(
-        normalized_features,
-        features_depth,
-        features_width,
-        features_height,
+    normalized_data = dimension.numpy_unsqueeze(
+        normalized_data,
+        data_depth,
+        data_width,
+        data_height,
     )
 
-    breakpoint()
+    divide = Divide(normalized_data, labels)
+    divide.fit(test_dataset_ratio=0.2)
 
+    training_data, training_labels = divide.training_dataset()
+    test_data, test_labels = divide.test_dataset()
+
+    """
+    Feature selection using ReliefF algorithm
+    """
     number_of_feature_reduction = input(
-        "Please insert number of features to be reduced."
+        "Please insert number of features to be reduced.\n"
     )
     number_of_feature_reduction = int(number_of_feature_reduction)
 
-    relieff = ReliefF(
-        n_neighbors=normalized_features.shape[2],
-        n_features_to_keep=normalized_features.shape[2] - number_of_feature_reduction,
-    )
+    if research_question == 2 or research_question == 3:
+        training_data_for_relieff = np.sum(training_data, axis=1)
 
-    type_conversion = AsTensor()
-    normalized_features_as_tensor = type_conversion.array_to_tensor(normalized_features)
+    relieff = ReliefF(
+        n_neighbors=normalized_data.shape[2],
+        n_features_to_keep=normalized_data.shape[2] - number_of_feature_reduction,
+    )
+    relieff.fit_transform(training_data_for_relieff, np.squeeze(training_labels))
+    top_feature_indices = relieff.top_features[0 : relieff.n_features_to_keep]
+
+    training_data = training_data[:, :, top_feature_indices]
+    training_data = np.expand_dims(training_data, axis=3)
+    test_data = test_data[:, :, top_feature_indices]
+    test_data = np.expand_dims(test_data, axis=3)
+
+    """
+    Data type conversion from Numpy array to tensor
+    """
+    as_tensor = AsTensor()
+    training_data_as_tensor = as_tensor.array_to_tensor(training_data)
+    training_labels_as_tensor = as_tensor.array_to_tensor(training_labels)
+
+    test_data_as_tensor = as_tensor.array_to_tensor(test_data)
+    test_labels_as_tensor = as_tensor.array_to_tensor(test_labels)
+
+    nn_model = ResNet50([3, 4, 6, 3], 2)
+    nn_training = NNTraining(nn_model)
+    nn_training.train_model(training_data_as_tensor, training_labels_as_tensor)
 
     breakpoint()
 

@@ -84,11 +84,22 @@ class Fetch:
                 wrist_data_txt = self._parse_txt_data(wrist_path)
                 helical_data_txt = self._parse_txt_data(helical_path)
 
-                hand_data_chunk.append(hand_data_txt)
-                wrist_data_chunk.append(wrist_data_txt)
-                helical_data_chunk.append(helical_data_txt)
+                hand_data_txt_length = len(hand_data_txt)
+                wrist_data_txt_length = len(wrist_data_txt)
+                helical_data_txt_length = len(helical_data_txt)
 
-                labels_chunk.append(label)
+                minimum_data_txt_length = min(
+                    hand_data_txt_length,
+                    wrist_data_txt_length,
+                    helical_data_txt_length,
+                )
+
+                if minimum_data_txt_length > 0:
+                    hand_data_chunk.append(hand_data_txt)
+                    wrist_data_chunk.append(wrist_data_txt)
+                    helical_data_chunk.append(helical_data_txt)
+
+                    labels_chunk.append(label)
 
         print("All data is imported.")
         print("Compressing all data to chunks.")

@@ -1,3 +1,5 @@
+from typing import List
+
 import tensorflow as tf
 
 from neural_networks._residual_block import (
@@ -6,28 +8,28 @@ from neural_networks._residual_block import (
 )
 
 
-def residual_convolution_layer_type1(filters: int, blocks: int, strides: int = 1):
+def residual_convolution_layer_type1(channels: int, blocks: int, strides: int = 1):
     residual_convolution_layer = tf.keras.Sequential()
-    residual_convolution_layer.add(BottleneckType2(filters, strides))
+    residual_convolution_layer.add(BottleneckType2(channels, strides))
 
     for _ in range(1, blocks):
-        residual_convolution_layer.add(BottleneckType1(filters, 1))
+        residual_convolution_layer.add(BottleneckType1(channels, 1))
 
     return residual_convolution_layer
 
 
-def residual_convolution_layer_type2(filters: int, blocks: int, strides: int = 1):
+def residual_convolution_layer_type2(channels: int, blocks: int, strides: int = 1):
     residual_convolution_layer = tf.keras.Sequential()
-    residual_convolution_layer.add(BottleneckType1(filters, strides))
+    residual_convolution_layer.add(BottleneckType1(channels, strides))
 
     for _ in range(1, blocks):
-        residual_convolution_layer.add(BottleneckType1(filters, 1))
+        residual_convolution_layer.add(BottleneckType1(channels, 1))
 
     return residual_convolution_layer
 
 
 class ResNet50(tf.keras.Model):
-    def __init__(self, _block_parameters: list[int], _units: int):
+    def __init__(self, _block_parameters: List[int], _units: int):
         super(ResNet50, self).__init__()
 
         self.convolution_layer_type_1 = tf.keras.layers.Conv2D(
@@ -39,19 +41,19 @@ class ResNet50(tf.keras.Model):
         self.batch_normalization = tf.keras.layers.BatchNormalization()
 
         self.convolution_layer_type2 = residual_convolution_layer_type1(
-            filters=64,
+            channels=64,
             blocks=_block_parameters[0],
         )
         self.convolution_layer_type3 = residual_convolution_layer_type2(
-            filters=128,
+            channels=128,
             blocks=_block_parameters[1],
         )
         self.convolution_layer_type4 = residual_convolution_layer_type2(
-            filters=256,
+            channels=256,
             blocks=_block_parameters[2],
         )
         self.convolution_layer_type5 = residual_convolution_layer_type2(
-            filters=512,
+            channels=512,
             blocks=_block_parameters[3],
         )
 
