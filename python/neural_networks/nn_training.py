@@ -25,17 +25,16 @@ class NNTraining:
 
     @tf.function
     def training_step(self, data: tf.Tensor, labels: tf.Tensor):
-        with tf.GradientTape() as tape:
+        with tf.GradientTape(persistent=True) as tape:
             # training=True is only needed if there are layers with different
             # behavior during training versus inference (e.g. Dropout).
             predictions = self.model(data, training=True)
-            breakpoint()
             loss = loss_object(labels, predictions)
 
         gradients = tape.gradient(loss, self.model.trainable_variables)
         optimizer.apply_gradients(zip(gradients, self.model.trainable_variables))
 
-        train_loss(loss)
+        train_loss(labels, predictions)
         train_accuracy(labels, predictions)
 
     @tf.function
@@ -49,7 +48,6 @@ class NNTraining:
         test_accuracy(labels, predictions)
 
     def train_model(self, training_data, training_labels) -> None:
-        training_one_hot_labels = tf.one_hot(tf.squeeze(training_labels), 2)
 
         for epoch in range(self.epochs):
             # Reset the metrics at the start of the next epoch
@@ -58,10 +56,9 @@ class NNTraining:
             test_loss.reset_states()
             test_accuracy.reset_states()
 
-            training_data = training_data[0:12]
-            training_one_hot_labels = training_one_hot_labels[0:12]
-            # for training_data, training_labels in zip(training_data, training_labels):
-            self.training_step(training_data, training_one_hot_labels)
+            for training_data, training_labels in zip(training_data, training_labels):
+                training_one_hot_labels = tf.one_hot(tf.squeeze(training_labels), 2)
+                self.training_step(training_data, training_one_hot_labels)
 
             # for test_images, test_labels in test_ds:
             #     test_step(test_images, test_labels)
@@ -70,6 +67,6 @@ class NNTraining:
                 f"Epoch {epoch + 1}, "
                 f"Loss: {train_loss.result()}, "
                 f"Accuracy: {train_accuracy.result() * 100}, "
-                f"Test Loss: {test_loss.result()}, "
-                f"Test Accuracy: {test_accuracy.result() * 100}"
+                # f"Test Loss: {test_loss.result()}, "
+                # f"Test Accuracy: {test_accuracy.result() * 100}"
             )

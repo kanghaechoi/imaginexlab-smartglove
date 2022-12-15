@@ -1,10 +1,14 @@
 from dataset.extraction import Extraction
 from dataset.divide import Divide
+from dataset.mini_batch import MiniBatch
+
 from filters.normalization import MinMaxNormalization
 from filters.relieff import ReliefF
+
 from utilities.dimension import Dimension
 from utilities.fetch import Fetch
 from utilities.read import Read
+
 from type.as_tensor import AsTensor
 
 from neural_networks.resnet import ResNet50
@@ -117,6 +121,14 @@ if __name__ == "__main__":
     test_data = test_data[:, :, top_feature_indices]
     test_data = np.expand_dims(test_data, axis=3)
 
+    mini_batch = MiniBatch(
+        training_data,
+        training_labels,
+        number_of_batches=64,
+        batch_size=16,
+    )
+    training_data, training_labels = mini_batch.get_mini_batch()
+
     """
     Data type conversion from Numpy array to tensor
     """
@@ -127,7 +139,6 @@ if __name__ == "__main__":
     test_data_as_tensor = as_tensor.array_to_tensor(test_data)
     test_labels_as_tensor = as_tensor.array_to_tensor(test_labels)
 
-    breakpoint()
     resnet50_block_parameters = [3, 4, 6, 3]
     nn_model = ResNet50(resnet50_block_parameters, 2)
     nn_training = NNTraining(nn_model)
