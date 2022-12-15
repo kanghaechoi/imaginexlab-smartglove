@@ -12,6 +12,32 @@ test_loss = tf.keras.metrics.BinaryCrossentropy(name="test_loss")
 test_accuracy = tf.keras.metrics.BinaryAccuracy(name="test_accuracy")
 
 
+@tf.function
+def training_step(model, data: tf.Tensor, labels: tf.Tensor):
+    with tf.GradientTape(persistent=True) as tape:
+        # training=True is only needed if there are layers with different
+        # behavior during training versus inference (e.g. Dropout).
+        predictions = model(data, training=True)
+        loss = loss_object(labels, predictions)
+
+    gradients = tape.gradient(loss, model.trainable_variables)
+    optimizer.apply_gradients(zip(gradients, model.trainable_variables))
+
+    train_loss(labels, predictions)
+    train_accuracy(labels, predictions)
+
+
+@tf.function
+def test_step(data: tf.Tensor, labels: tf.Tensor):
+    # training=False is only needed if there are layers with different
+    # behavior during training versus inference (e.g. Dropout).
+    predictions = model(data, training=False)
+    t_loss = loss_object(labels, predictions)
+
+    test_loss(t_loss)
+    test_accuracy(labels, predictions)
+
+
 class NNTraining:
     def __init__(
         self,
@@ -23,30 +49,6 @@ class NNTraining:
         self.optimizer = optimizer
         self.epochs = epochs
 
-    @tf.function
-    def training_step(self, data: tf.Tensor, labels: tf.Tensor):
-        with tf.GradientTape(persistent=True) as tape:
-            # training=True is only needed if there are layers with different
-            # behavior during training versus inference (e.g. Dropout).
-            predictions = self.model(data, training=True)
-            loss = loss_object(labels, predictions)
-
-        gradients = tape.gradient(loss, self.model.trainable_variables)
-        optimizer.apply_gradients(zip(gradients, self.model.trainable_variables))
-
-        train_loss(labels, predictions)
-        train_accuracy(labels, predictions)
-
-    @tf.function
-    def test_step(self, data: tf.Tensor, labels: tf.Tensor):
-        # training=False is only needed if there are layers with different
-        # behavior during training versus inference (e.g. Dropout).
-        predictions = self.model(data, training=False)
-        t_loss = loss_object(labels, predictions)
-
-        test_loss(t_loss)
-        test_accuracy(labels, predictions)
-
     def train_model(self, training_data, training_labels) -> None:
 
         for epoch in range(self.epochs):
@@ -56,9 +58,12 @@ class NNTraining:
             test_loss.reset_states()
             test_accuracy.reset_states()
 
-            for training_data, training_labels in zip(training_data, training_labels):
+            for batch_index, (training_data, training_labels) in enumerate(
+                zip(training_data, training_labels)
+            ):
                 training_one_hot_labels = tf.one_hot(tf.squeeze(training_labels), 2)
-                self.training_step(training_data, training_one_hot_labels)
+                training_step(self.model, training_data, training_one_hot_labels)
+                print("Batch index: ", batch_index)
 
             # for test_images, test_labels in test_ds:
             #     test_step(test_images, test_labels)
