@@ -7,6 +7,6 @@ class AsTensor:
         pass
 
     def array_to_tensor(self, array: np.ndarray) -> tf.Tensor:
-        tensor = tf.constant(array)
+        tensor = tf.Variable(array)
 
         return tensor

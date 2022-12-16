@@ -13,7 +13,7 @@ test_accuracy = tf.keras.metrics.BinaryAccuracy(name="test_accuracy")
 
 
 @tf.function
-def training_step(model, data: tf.Tensor, labels: tf.Tensor):
+def training_step(model: tf.keras.Model, data: tf.Tensor, labels: tf.Tensor):
     with tf.GradientTape(persistent=True) as tape:
         # training=True is only needed if there are layers with different
         # behavior during training versus inference (e.g. Dropout).
@@ -28,7 +28,7 @@ def training_step(model, data: tf.Tensor, labels: tf.Tensor):
 
 
 @tf.function
-def test_step(data: tf.Tensor, labels: tf.Tensor):
+def test_step(model, data: tf.Tensor, labels: tf.Tensor):
     # training=False is only needed if there are layers with different
     # behavior during training versus inference (e.g. Dropout).
     predictions = model(data, training=False)
@@ -49,8 +49,7 @@ class NNTraining:
         self.optimizer = optimizer
         self.epochs = epochs
 
-    def train_model(self, training_data, training_labels) -> None:
-
+    def train_model(self, training_data: tf.Tensor, training_labels: tf.Tensor) -> None:
         for epoch in range(self.epochs):
             # Reset the metrics at the start of the next epoch
             train_loss.reset_states()
@@ -58,12 +57,13 @@ class NNTraining:
             test_loss.reset_states()
             test_accuracy.reset_states()
 
+            breakpoint()
             for batch_index, (training_data, training_labels) in enumerate(
                 zip(training_data, training_labels)
             ):
                 training_one_hot_labels = tf.one_hot(tf.squeeze(training_labels), 2)
                 training_step(self.model, training_data, training_one_hot_labels)
-                print("Batch index: ", batch_index)
+                print("Batch index: ", batch_index + 1)
 
             # for test_images, test_labels in test_ds:
             #     test_step(test_images, test_labels)
