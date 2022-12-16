@@ -59,7 +59,7 @@ class NNTraining:
 
             breakpoint()
             for batch_index, (mini_training_data, mini_training_labels) in enumerate(
-                zip(mini_training_data, mini_training_labels)
+                zip(training_data, training_labels)
             ):
                 training_one_hot_labels = tf.one_hot(
                     tf.squeeze(mini_training_labels), 2
