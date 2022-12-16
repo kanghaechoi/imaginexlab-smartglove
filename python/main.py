@@ -14,6 +14,7 @@ from type.as_tensor import AsTensor
 from neural_networks.resnet import ResNet50
 from neural_networks.nn_training import NNTraining
 
+import tensorflow as tf
 import numpy as np
 
 if __name__ == "__main__":
@@ -121,28 +122,10 @@ if __name__ == "__main__":
     test_data = test_data[:, :, top_feature_indices]
     test_data = np.expand_dims(test_data, axis=3)
 
-    mini_batch = MiniBatch(
-        training_data,
-        training_labels,
-        number_of_batches=64,
-        batch_size=16,
-    )
-    training_data, training_labels = mini_batch.get_mini_batch()
-
-    """
-    Data type conversion from Numpy array to tensor
-    """
-    as_tensor = AsTensor()
-    training_data_as_tensor = as_tensor.array_to_tensor(training_data)
-    training_labels_as_tensor = as_tensor.array_to_tensor(training_labels)
-
-    test_data_as_tensor = as_tensor.array_to_tensor(test_data)
-    test_labels_as_tensor = as_tensor.array_to_tensor(test_labels)
-
     resnet50_block_parameters = [3, 4, 6, 3]
     nn_model = ResNet50(resnet50_block_parameters, 2)
-    nn_training = NNTraining(nn_model)
-    nn_training.train_model(training_data_as_tensor, training_labels_as_tensor)
+    nn_training = NNTraining(nn_model, epochs=32, batch_size=16)
+    nn_training.train_model(training_data, training_labels)
 
     breakpoint()
 

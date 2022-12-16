@@ -1,4 +1,7 @@
+import numpy as np
 import tensorflow as tf
+
+from dataset.mini_batch import MiniBatch
 
 
 loss_object = tf.keras.losses.BinaryCrossentropy()
@@ -44,12 +47,24 @@ class NNTraining:
         model: tf.keras.Model,
         optimizer: tf.keras.optimizers = tf.keras.optimizers.Adam,
         epochs: int = 256,
+        batch_size: int = 32,
     ) -> None:
         self.model = model
         self.optimizer = optimizer
         self.epochs = epochs
+        self.batch_size = batch_size
 
-    def train_model(self, training_data: tf.Tensor, training_labels: tf.Tensor) -> None:
+    def train_model(
+        self,
+        _training_data: np.ndarray,
+        _training_labels: np.ndarray,
+    ) -> None:
+        training_dataset = (
+            tf.data.Dataset.from_tensor_slices((_training_data, _training_labels))
+            .shuffle(_training_data.shape[0])
+            .batch(self.batch_size)
+        )
+
         for epoch in range(self.epochs):
             # Reset the metrics at the start of the next epoch
             train_loss.reset_states()
@@ -57,17 +72,16 @@ class NNTraining:
             test_loss.reset_states()
             test_accuracy.reset_states()
 
-            for batch_count, (mini_training_data, mini_training_labels) in enumerate(
-                zip(training_data, training_labels)
-            ):
-                mini_training_one_hot_labels = tf.one_hot(
-                    tf.squeeze(mini_training_labels),
+            # training_data, training_labels = mini_batch.get_mini_batch_dataset()
+            for small_training_data, small_training_labels in training_dataset:
+                breakpoint()
+                small_training_labels_as_one_hot = tf.one_hot(
+                    tf.squeeze(small_training_labels),
                     2,
                 )
                 training_step(
-                    self.model, mini_training_data, mini_training_one_hot_labels
+                    self.model, small_training_data, small_training_labels_as_one_hot
                 )
-                print("Batch index: ", batch_count + 1)
 
             # for test_images, test_labels in test_ds:
             #     test_step(test_images, test_labels)
