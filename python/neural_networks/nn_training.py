@@ -74,7 +74,6 @@ class NNTraining:
 
             # training_data, training_labels = mini_batch.get_mini_batch_dataset()
             for small_training_data, small_training_labels in training_dataset:
-                breakpoint()
                 small_training_labels_as_one_hot = tf.one_hot(
                     tf.squeeze(small_training_labels),
                     2,
