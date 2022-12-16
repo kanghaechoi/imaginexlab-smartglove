@@ -59,11 +59,6 @@ class NNTraining:
         _training_data: np.ndarray,
         _training_labels: np.ndarray,
     ) -> None:
-        training_dataset = (
-            tf.data.Dataset.from_tensor_slices((_training_data, _training_labels))
-            .shuffle(_training_data.shape[0])
-            .batch(self.batch_size)
-        )
 
         for epoch in range(self.epochs):
             # Reset the metrics at the start of the next epoch
@@ -72,7 +67,12 @@ class NNTraining:
             test_loss.reset_states()
             test_accuracy.reset_states()
 
-            # training_data, training_labels = mini_batch.get_mini_batch_dataset()
+            training_dataset = (
+                tf.data.Dataset.from_tensor_slices((_training_data, _training_labels))
+                .shuffle(_training_data.shape[0] * 10)
+                .batch(self.batch_size)
+            )
+
             for small_training_data, small_training_labels in training_dataset:
                 small_training_labels_as_one_hot = tf.one_hot(
                     tf.squeeze(small_training_labels),
