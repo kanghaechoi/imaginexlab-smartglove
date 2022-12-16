@@ -57,15 +57,17 @@ class NNTraining:
             test_loss.reset_states()
             test_accuracy.reset_states()
 
-            breakpoint()
-            for batch_index, (mini_training_data, mini_training_labels) in enumerate(
+            for batch_count, (mini_training_data, mini_training_labels) in enumerate(
                 zip(training_data, training_labels)
             ):
-                training_one_hot_labels = tf.one_hot(
-                    tf.squeeze(mini_training_labels), 2
+                mini_training_one_hot_labels = tf.one_hot(
+                    tf.squeeze(mini_training_labels),
+                    2,
                 )
-                training_step(self.model, mini_training_data, training_one_hot_labels)
-                print("Batch index: ", batch_index + 1)
+                training_step(
+                    self.model, mini_training_data, mini_training_one_hot_labels
+                )
+                print("Batch index: ", batch_count + 1)
 
             # for test_images, test_labels in test_ds:
             #     test_step(test_images, test_labels)
