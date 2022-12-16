@@ -58,11 +58,13 @@ class NNTraining:
             test_accuracy.reset_states()
 
             breakpoint()
-            for batch_index, (training_data, training_labels) in enumerate(
-                zip(training_data, training_labels)
+            for batch_index, (mini_training_data, mini_training_labels) in enumerate(
+                zip(mini_training_data, mini_training_labels)
             ):
-                training_one_hot_labels = tf.one_hot(tf.squeeze(training_labels), 2)
-                training_step(self.model, training_data, training_one_hot_labels)
+                training_one_hot_labels = tf.one_hot(
+                    tf.squeeze(mini_training_labels), 2
+                )
+                training_step(self.model, mini_training_data, training_one_hot_labels)
                 print("Batch index: ", batch_index + 1)
 
             # for test_images, test_labels in test_ds:
