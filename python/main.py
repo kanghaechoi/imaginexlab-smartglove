@@ -1,21 +1,18 @@
+import tensorflow as tf
+import numpy as np
+
 from dataset.extraction import Extraction
 from dataset.divide import Divide
-from dataset.mini_batch import MiniBatch
 
 from filters.normalization import MinMaxNormalization
 from filters.relieff import ReliefF
 
 from utilities.dimension import Dimension
 from utilities.fetch import Fetch
-from utilities.read import Read
 
-from type.as_tensor import AsTensor
-
-from neural_networks.resnet import ResNet50
+from neural_networks.resnet import ResNet
 from neural_networks.nn_training import NNTraining
 
-import tensorflow as tf
-import numpy as np
 
 if __name__ == "__main__":
     print("======================")
@@ -122,9 +119,21 @@ if __name__ == "__main__":
     test_data = test_data[:, :, top_feature_indices]
     test_data = np.expand_dims(test_data, axis=3)
 
+    """
+    Model training
+    """
+    epochs = int(input("Please insert the number of epochs: "))
+    batch_size = int(input("Please insert batch size: "))
+
     resnet50_block_parameters = [3, 4, 6, 3]
-    nn_model = ResNet50(resnet50_block_parameters, 2)
-    nn_training = NNTraining(nn_model, epochs=32, batch_size=16)
+    resnet101_block_parameters = []
+    resnet152_block_parameters = []
+
+    resnet50 = ResNet(resnet50_block_parameters, 2)
+
+    adam_optimizer = tf.keras.optimizers.Adam
+
+    nn_training = NNTraining(resnet50, adam_optimizer, epochs, batch_size)
     nn_training.train_model(training_data, training_labels)
 
     breakpoint()

@@ -44,15 +44,15 @@ def test_step(model, data: tf.Tensor, labels: tf.Tensor):
 class NNTraining:
     def __init__(
         self,
-        model: tf.keras.Model,
-        optimizer: tf.keras.optimizers = tf.keras.optimizers.Adam,
-        epochs: int = 256,
-        batch_size: int = 32,
+        _model: tf.keras.Model,
+        _optimizer: tf.keras.optimizers = tf.keras.optimizers.Adam,
+        _epochs: int = 256,
+        _batch_size: int = 32,
     ) -> None:
-        self.model = model
-        self.optimizer = optimizer
-        self.epochs = epochs
-        self.batch_size = batch_size
+        self._model = _model
+        self._optimizer = _optimizer
+        self._epochs = _epochs
+        self._batch_size = _batch_size
 
     def train_model(
         self,
@@ -60,7 +60,7 @@ class NNTraining:
         _training_labels: np.ndarray,
     ) -> None:
 
-        for epoch in range(self.epochs):
+        for epoch in range(self._epochs):
             # Reset the metrics at the start of the next epoch
             train_loss.reset_states()
             train_accuracy.reset_states()
@@ -70,7 +70,7 @@ class NNTraining:
             training_dataset = (
                 tf.data.Dataset.from_tensor_slices((_training_data, _training_labels))
                 .shuffle(_training_data.shape[0] * 10)
-                .batch(self.batch_size)
+                .batch(self._batch_size)
             )
 
             for small_training_data, small_training_labels in training_dataset:
@@ -79,7 +79,7 @@ class NNTraining:
                     2,
                 )
                 training_step(
-                    self.model, small_training_data, small_training_labels_as_one_hot
+                    self._model, small_training_data, small_training_labels_as_one_hot
                 )
 
             # for test_images, test_labels in test_ds:

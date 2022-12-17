@@ -28,9 +28,9 @@ def residual_convolution_layer_type2(channels: int, blocks: int, strides: int = 
     return residual_convolution_layer
 
 
-class ResNet50(tf.keras.Model):
+class ResNet(tf.keras.Model):
     def __init__(self, _block_parameters: List[int], _units: int):
-        super(ResNet50, self).__init__()
+        super(ResNet, self).__init__()
 
         self.convolution_layer_type_1 = tf.keras.layers.Conv2D(
             filters=64,
