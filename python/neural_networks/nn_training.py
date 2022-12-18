@@ -6,8 +6,8 @@ loss_object = tf.keras.losses.BinaryCrossentropy()
 
 optimizer = tf.keras.optimizers.Adam()
 
-train_loss = tf.keras.metrics.BinaryCrossentropy(name="train_loss")
-train_accuracy = tf.keras.metrics.BinaryAccuracy(name="train_accuracy")
+training_loss = tf.keras.metrics.BinaryCrossentropy(name="train_loss")
+training_accuracy = tf.keras.metrics.BinaryAccuracy(name="train_accuracy")
 
 test_loss = tf.keras.metrics.BinaryCrossentropy(name="test_loss")
 test_accuracy = tf.keras.metrics.BinaryAccuracy(name="test_accuracy")
@@ -24,18 +24,18 @@ def training_step(model: tf.keras.Model, data: tf.Tensor, labels: tf.Tensor):
     gradients = tape.gradient(loss, model.trainable_variables)
     optimizer.apply_gradients(zip(gradients, model.trainable_variables))
 
-    train_loss(labels, predictions)
-    train_accuracy(labels, predictions)
+    training_loss(labels, predictions)
+    training_accuracy(labels, predictions)
 
 
 @tf.function
-def test_step(model, data: tf.Tensor, labels: tf.Tensor):
+def test_step(model: tf.keras.Model, data: tf.Tensor, labels: tf.Tensor):
     # training=False is only needed if there are layers with different
     # behavior during training versus inference (e.g. Dropout).
     predictions = model(data, training=False)
-    t_loss = loss_object(labels, predictions)
+    loss = loss_object(labels, predictions)
 
-    test_loss(t_loss)
+    test_loss(loss)
     test_accuracy(labels, predictions)
 
 
@@ -43,31 +43,33 @@ class NNTraining:
     def __init__(
         self,
         _model: tf.keras.Model,
-        _optimizer: tf.keras.optimizers = tf.keras.optimizers.Adam,
-        _epochs: int = 256,
-        _batch_size: int = 32,
+        _optimizer: tf.keras.optimizers,
+        _epochs: int,
+        _batch_size: int,
+        _saved_models_path: str,
     ) -> None:
-        self._model = _model
-        self._optimizer = _optimizer
-        self._epochs = _epochs
-        self._batch_size = _batch_size
+        self.model = _model
+        self.optimizer = _optimizer
+        self.epochs = _epochs
+        self.batch_size = _batch_size
+
+        self.is_trained: bool = False
+        self.saved_models_path = _saved_models_path
 
     def train_model(
         self,
         _training_data: np.ndarray,
         _training_labels: np.ndarray,
     ) -> None:
-        for epoch in range(self._epochs):
+        for epoch in range(self.epochs):
             # Reset the metrics at the start of the next epoch
-            train_loss.reset_states()
-            train_accuracy.reset_states()
-            test_loss.reset_states()
-            test_accuracy.reset_states()
+            training_loss.reset_states()
+            training_accuracy.reset_states()
 
             training_dataset = (
                 tf.data.Dataset.from_tensor_slices((_training_data, _training_labels))
                 .shuffle(_training_data.shape[0] * 10)
-                .batch(self._batch_size)
+                .batch(self.batch_size)
             )
 
             for small_training_data, small_training_labels in training_dataset:
@@ -76,22 +78,42 @@ class NNTraining:
                     2,
                 )
                 training_step(
-                    self._model,
+                    self.model,
                     small_training_data,
                     small_training_labels_as_one_hot,
                 )
 
-            # for test_images, test_labels in test_ds:
-            #     test_step(test_images, test_labels)
-
             print(
                 f"Epoch {epoch + 1}, "
-                f"Loss: {train_loss.result()}, "
-                f"Accuracy: {train_accuracy.result() * 100}, "
-                # f"Test Loss: {test_loss.result()}, "
-                # f"Test Accuracy: {test_accuracy.result() * 100}"
+                f"Training Loss: {training_loss.result()}, "
+                f"Training Accuracy: {training_accuracy.result() * 100}, "
             )
 
-        self._model.summary()
+        self.is_trained = True
 
-        self._model.save("./python/saved_models/resnet50")
+    def save_trained_model(self) -> None:
+        if self.is_trained is False:
+            SystemError("Please train a model in advance.")
+
+        self.model.save(self.saved_models_path)
+
+    def test_trained_model(
+        self,
+        _test_data: np.ndarray,
+        _test_labels: np.ndarray,
+    ) -> None:
+        if self.is_trained is False:
+            SystemError("Please train a model in advance.")
+
+        test_loss.reset_states()
+        test_accuracy.reset_states()
+
+        test_dataset = tf.data.Dataset.from_tensor((_test_data, _test_labels))
+
+        for test_data, test_labels in test_dataset:
+            test_step(test_data, test_labels)
+
+        print(
+            f"Test Loss: {test_loss.result()}, "
+            f"Test Accuracy: {test_accuracy.result() * 100}"
+        )

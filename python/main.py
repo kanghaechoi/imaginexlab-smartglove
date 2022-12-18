@@ -124,24 +124,47 @@ if __name__ == "__main__":
     """
     Model training
     """
-    epochs = int(input("Please insert the number of epochs: "))
-    batch_size = int(input("Please insert batch size: "))
+    epochs: str = input("Please insert the number of epochs: ")
+    epochs: int = int(epochs)
 
-    resnet50_block_parameters = [3, 4, 6, 3]
-    resnet101_block_parameters = [3, 4, 23, 3]
-    resnet152_block_parameters = [3, 8, 36, 3]
+    batch_size: str = input("Please insert batch size: ")
+    batch_size: int = int(batch_size)
 
-    resnet50 = ResNet(resnet50_block_parameters, number_of_classes)
-    resnet101 = ResNet(resnet101_block_parameters, number_of_classes)
-    resnek152 = ResNet(resnet152_block_parameters, number_of_classes)
+    chosen_model: str = input(
+        "Please select a model to train.\n(1) ResNet-50\n(2)ResNet-101\n(3)ResNet-152\n"
+    )
+    chosen_model: int = int(chosen_model)
+
+    if chosen_model == 1:
+        resnet_block_parameters: list = [3, 4, 6, 3]
+        saved_models_path: str = "./python/saved_models/resnet50"
+    elif chosen_model == 2:
+        resnet_block_parameters: list = [3, 4, 23, 3]
+        saved_models_path: str = "./python/saved_models/resnet101"
+    elif chosen_model == 3:
+        resnet_block_parameters: list = [3, 8, 36, 3]
+        saved_models_path: str = "./python/saved_models/resnet152"
+    else:
+        ValueError()
+
+    resnet = ResNet(resnet_block_parameters, number_of_classes)
 
     adam_optimizer = tf.keras.optimizers.Adam
+    rms_prop_optimizer = tf.keras.optimizers.RMSprop
 
-    nn_training = NNTraining(resnet50, adam_optimizer, epochs, batch_size)
+    nn_training = NNTraining(
+        resnet,
+        adam_optimizer,
+        epochs,
+        batch_size,
+        saved_models_path,
+    )
     nn_training.train_model(training_data, training_labels)
+    nn_training.save_trained_model()
+    nn_training.test_trained_model(test_data, test_labels)
 
-    new_resnet50 = tf.keras.models.load_model("./python/saved_models/resnet50")
-    new_resnet50.summary()
+    new_resnet = tf.keras.models.load_model(saved_models_path)
+    new_resnet.summary()
 
     breakpoint()
 
