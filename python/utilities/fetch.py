@@ -8,7 +8,7 @@ class Fetch:
         self,
         _research_question: int,
         _ages: list,
-        _authentication_flag: bool = False,
+        _authentication_flag: bool,
         _authentication_classes: Optional[list] = None,
     ) -> None:
         self.research_question = _research_question

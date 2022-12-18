@@ -38,10 +38,12 @@ if __name__ == "__main__":
         ages = [age_20s, age_50s, age_70s]
         authentication_classes = None
         authentication_flag: bool = False
+        number_of_classes = len(ages)
     elif research_question == 2 or research_question == 3:
         ages = [age_20s]
         authentication_classes = [is_authorized, is_not_authorized]
         authentication_flag: bool = True
+        number_of_classes = len(authentication_classes)
     else:
         raise ValueError
 
@@ -126,10 +128,12 @@ if __name__ == "__main__":
     batch_size = int(input("Please insert batch size: "))
 
     resnet50_block_parameters = [3, 4, 6, 3]
-    resnet101_block_parameters = []
-    resnet152_block_parameters = []
+    resnet101_block_parameters = [3, 4, 23, 3]
+    resnet152_block_parameters = [3, 8, 36, 3]
 
-    resnet50 = ResNet(resnet50_block_parameters, 2)
+    resnet50 = ResNet(resnet50_block_parameters, number_of_classes)
+    resnet101 = ResNet(resnet101_block_parameters, number_of_classes)
+    resnek152 = ResNet(resnet152_block_parameters, number_of_classes)
 
     adam_optimizer = tf.keras.optimizers.Adam
 
