@@ -57,8 +57,6 @@ class NNTraining:
         _training_data: np.ndarray,
         _training_labels: np.ndarray,
     ) -> None:
-        self._model.summary()
-
         for epoch in range(self._epochs):
             # Reset the metrics at the start of the next epoch
             train_loss.reset_states()
@@ -94,5 +92,6 @@ class NNTraining:
                 # f"Test Accuracy: {test_accuracy.result() * 100}"
             )
 
-        breakpoint()
+        self._model.summary()
+
         self._model.save("./python/saved_models/resnet50")

@@ -137,6 +137,7 @@ if __name__ == "__main__":
     nn_training.train_model(training_data, training_labels)
 
     new_resnet50 = tf.keras.models.load_model("./python/saved_models/resnet50")
+    new_resnet50.summary()
 
     breakpoint()
 
