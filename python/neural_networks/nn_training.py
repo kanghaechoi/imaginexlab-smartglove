@@ -108,7 +108,7 @@ class NNTraining:
         test_loss.reset_states()
         test_accuracy.reset_states()
 
-        test_dataset = tf.data.Dataset.from_tensor((_test_data, _test_labels))
+        test_dataset = tf.data.Dataset.from_tensors((_test_data, _test_labels))
 
         for test_data, test_labels in test_dataset:
             test_step(test_data, test_labels)
