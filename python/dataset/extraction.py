@@ -11,7 +11,7 @@ class Extraction:
         _research_question: int,
         _ages: list,
         _data_chunks: zip,
-        _sample_length: int = 150,
+        _sample_length: int,
         _authentication_classes: Optional[list] = None,
     ) -> None:
         self.research_question = _research_question
@@ -20,36 +20,19 @@ class Extraction:
         self.sample_length = _sample_length
         self.authentication_classes = _authentication_classes
 
-    def _create_array_default(self, data: np.ndarray, array_length: int) -> np.ndarray:
-        data = data.reshape(1, -1)
-
-        number_of_samples = data.shape[1]
-
-        if number_of_samples >= array_length:
-            array = data[0, :array_length].reshape(1, -1)
-        else:
-            array = np.block([data, np.zeros((1, array_length - number_of_samples))])
+    def _create_array_default(self, data: np.ndarray) -> np.ndarray:
+        array = data.reshape(1, -1)
 
         return array
 
-    def _create_array_for_integral(
-        self, data: np.ndarray, array_length: int
-    ) -> np.ndarray:
+    def _create_array_for_integral(self, data: np.ndarray) -> np.ndarray:
         data = data.reshape(1, -1)
 
-        number_of_samples = data.shape[1]
+        integral_data = integrate.cumtrapz(data)
 
-        data_integral = integrate.cumtrapz(data)
+        last_integral_data = np.expand_dims(integral_data[:, -1], axis=0)
 
-        if number_of_samples > array_length:
-            array = data_integral[0, :array_length].reshape(1, -1)
-        else:
-            array = np.block(
-                [
-                    data_integral,
-                    np.zeros((1, array_length - number_of_samples + 1)),
-                ]
-            )
+        array = np.hstack((integral_data, last_integral_data))
 
         return array
 
@@ -85,99 +68,41 @@ class Extraction:
                 helical_array = np.array(helical_data[sample_index]).astype(float)
                 helical_array = helical_array.transpose()
 
-                hand_x_angle = self._create_array_default(
-                    hand_array[0, :], self.sample_length
-                )
-                hand_y_angle = self._create_array_default(
-                    hand_array[1, :], self.sample_length
-                )
-                hand_z_angle = self._create_array_default(
-                    hand_array[2, :], self.sample_length
-                )
+                hand_x_angle = self._create_array_default(hand_array[0, :])
+                hand_y_angle = self._create_array_default(hand_array[1, :])
+                hand_z_angle = self._create_array_default(hand_array[2, :])
 
-                thumb_x_angle = self._create_array_default(
-                    hand_array[3, :], self.sample_length
-                )
-                index_x_angle = self._create_array_default(
-                    hand_array[4, :], self.sample_length
-                )
+                thumb_x_angle = self._create_array_default(hand_array[3, :])
+                index_x_angle = self._create_array_default(hand_array[4, :])
 
-                thumb_x_acceleration = self._create_array_default(
-                    hand_array[6, :], self.sample_length
-                )
-                thumb_x_velocity = self._create_array_for_integral(
-                    hand_array[6, :], self.sample_length
-                )
-                thumb_y_acceleration = self._create_array_default(
-                    hand_array[7, :], self.sample_length
-                )
-                thumb_y_velocity = self._create_array_for_integral(
-                    hand_array[7, :], self.sample_length
-                )
-                thumb_z_acceleration = self._create_array_default(
-                    hand_array[8, :], self.sample_length
-                )
-                thumb_z_velocity = self._create_array_for_integral(
-                    hand_array[8, :], self.sample_length
-                )
+                thumb_x_acceleration = self._create_array_default(hand_array[6, :])
+                thumb_x_velocity = self._create_array_for_integral(hand_array[6, :])
+                thumb_y_acceleration = self._create_array_default(hand_array[7, :])
+                thumb_y_velocity = self._create_array_for_integral(hand_array[7, :])
+                thumb_z_acceleration = self._create_array_default(hand_array[8, :])
+                thumb_z_velocity = self._create_array_for_integral(hand_array[8, :])
 
-                index_x_acceleration = self._create_array_default(
-                    hand_array[9, :], self.sample_length
-                )
-                index_x_velocity = self._create_array_for_integral(
-                    hand_array[9, :], self.sample_length
-                )
-                index_y_acceleration = self._create_array_default(
-                    hand_array[10, :], self.sample_length
-                )
-                index_y_velocity = self._create_array_for_integral(
-                    hand_array[10, :], self.sample_length
-                )
-                index_z_acceleration = self._create_array_default(
-                    hand_array[11, :], self.sample_length
-                )
-                index_z_velocity = self._create_array_for_integral(
-                    hand_array[11, :], self.sample_length
-                )
+                index_x_acceleration = self._create_array_default(hand_array[9, :])
+                index_x_velocity = self._create_array_for_integral(hand_array[9, :])
+                index_y_acceleration = self._create_array_default(hand_array[10, :])
+                index_y_velocity = self._create_array_for_integral(hand_array[10, :])
+                index_z_acceleration = self._create_array_default(hand_array[11, :])
+                index_z_velocity = self._create_array_for_integral(hand_array[11, :])
 
-                wrist_x_angle = self._create_array_default(
-                    wrist_array[0, :], self.sample_length
-                )
-                wrist_y_angle = self._create_array_default(
-                    wrist_array[1, :], self.sample_length
-                )
-                wrist_z_angle = self._create_array_default(
-                    wrist_array[2, :], self.sample_length
-                )
+                wrist_x_angle = self._create_array_default(wrist_array[0, :])
+                wrist_y_angle = self._create_array_default(wrist_array[1, :])
+                wrist_z_angle = self._create_array_default(wrist_array[2, :])
 
-                wrist_x_acceleration = self._create_array_default(
-                    wrist_array[3, :], self.sample_length
-                )
-                wrist_x_velocity = self._create_array_for_integral(
-                    wrist_array[3, :], self.sample_length
-                )
-                wrist_y_acceleration = self._create_array_default(
-                    wrist_array[4, :], self.sample_length
-                )
-                wrist_y_velocity = self._create_array_for_integral(
-                    wrist_array[4, :], self.sample_length
-                )
-                wrist_z_acceleration = self._create_array_default(
-                    wrist_array[5, :], self.sample_length
-                )
-                wrist_z_velocity = self._create_array_for_integral(
-                    wrist_array[5, :], self.sample_length
-                )
+                wrist_x_acceleration = self._create_array_default(wrist_array[3, :])
+                wrist_x_velocity = self._create_array_for_integral(wrist_array[3, :])
+                wrist_y_acceleration = self._create_array_default(wrist_array[4, :])
+                wrist_y_velocity = self._create_array_for_integral(wrist_array[4, :])
+                wrist_z_acceleration = self._create_array_default(wrist_array[5, :])
+                wrist_z_velocity = self._create_array_for_integral(wrist_array[5, :])
 
-                helical_x_angle = self._create_array_default(
-                    helical_array[0, :], self.sample_length
-                )
-                helical_y_angle = self._create_array_default(
-                    helical_array[1, :], self.sample_length
-                )
-                helical_z_angle = self._create_array_default(
-                    helical_array[2, :], self.sample_length
-                )
+                helical_x_angle = self._create_array_default(helical_array[0, :])
+                helical_y_angle = self._create_array_default(helical_array[1, :])
+                helical_z_angle = self._create_array_default(helical_array[2, :])
 
                 feature = np.concatenate(
                     (

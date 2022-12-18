@@ -8,7 +8,7 @@ from filters.normalization import MinMaxNormalization
 from filters.relieff import ReliefF
 
 from utilities.dimension import Dimension
-from utilities.fetch import Fetch
+from utilities.fetcher import Fetcher
 
 from neural_networks.resnet import ResNet
 from neural_networks.nn_training import NNTraining
@@ -50,10 +50,16 @@ if __name__ == "__main__":
     """
     Data fetch
     """
-    fetch = Fetch(research_question, ages, authentication_flag, authentication_classes)
-    data_chunks: zip = fetch.fetch_chunks()
+    sample_length: int = 50
+    fetch = Fetcher(
+        research_question,
+        ages,
+        sample_length,
+        authentication_flag,
+        authentication_classes,
+    )
+    data_chunks: zip = fetch.fetch_dataset_chunks()
 
-    sample_length: int = 150
     extraction = Extraction(
         research_question,
         ages,
