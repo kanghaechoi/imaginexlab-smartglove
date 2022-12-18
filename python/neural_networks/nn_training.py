@@ -111,7 +111,9 @@ class NNTraining:
         test_dataset = tf.data.Dataset.from_tensors((_test_data, _test_labels))
 
         for test_data, test_labels in test_dataset:
-            test_step(self.model, test_data, test_labels)
+            test_labels_as_one_hot = tf.one_hot(tf.squeeze(test_labels), 2)
+
+            test_step(self.model, test_data, test_labels_as_one_hot)
 
         print(
             f"Test Loss: {test_loss.result()}, "
