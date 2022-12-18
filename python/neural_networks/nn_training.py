@@ -33,9 +33,9 @@ def test_step(model: tf.keras.Model, data: tf.Tensor, labels: tf.Tensor):
     # training=False is only needed if there are layers with different
     # behavior during training versus inference (e.g. Dropout).
     predictions = model(data, training=False)
-    loss = loss_object(labels, predictions)
+    # loss = loss_object(labels, predictions)
 
-    test_loss(loss)
+    test_loss(labels, predictions)
     test_accuracy(labels, predictions)
 
 

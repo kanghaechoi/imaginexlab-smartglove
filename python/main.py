@@ -131,7 +131,7 @@ if __name__ == "__main__":
     batch_size: int = int(batch_size)
 
     chosen_model: str = input(
-        "Please select a model to train.\n(1) ResNet-50\n(2)ResNet-101\n(3)ResNet-152\n"
+        "Please select a model to train.\n(1) ResNet-50\n(2) ResNet-101\n(3) ResNet-152\n"
     )
     chosen_model: int = int(chosen_model)
 
