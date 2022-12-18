@@ -1,8 +1,6 @@
 import numpy as np
 import tensorflow as tf
 
-from dataset.mini_batch import MiniBatch
-
 
 loss_object = tf.keras.losses.BinaryCrossentropy()
 

@@ -136,6 +136,8 @@ if __name__ == "__main__":
     nn_training = NNTraining(resnet50, adam_optimizer, epochs, batch_size)
     nn_training.train_model(training_data, training_labels)
 
+    new_resnet50 = tf.keras.models.load_model("./saved_models/model.h5")
+
     breakpoint()
 
     if KeyboardInterrupt:
