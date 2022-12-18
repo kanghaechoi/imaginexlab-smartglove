@@ -92,4 +92,4 @@ class NNTraining:
                 # f"Test Accuracy: {test_accuracy.result() * 100}"
             )
 
-            self._model.save("../saved_models/resnet50")
+        self._model.save("../saved_models/resnet50")
