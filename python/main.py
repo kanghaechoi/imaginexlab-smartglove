@@ -71,13 +71,13 @@ if __name__ == "__main__":
     Array dimension manipulation (Temporal)
     """
     dimension = Dimension()
-    if research_question == 2 or research_question == 3:
-        data = dimension.numpy_squeeze(
-            data,
-            data_depth,
-            data_width,
-            data_height,
-        )
+    # if research_question == 2 or research_question == 3:
+    data = dimension.numpy_squeeze(
+        data,
+        data_depth,
+        data_width,
+        data_height,
+    )
 
     """
     Feature Normalization

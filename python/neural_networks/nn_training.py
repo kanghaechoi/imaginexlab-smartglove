@@ -86,7 +86,7 @@ class NNTraining:
             print(
                 f"Epoch {epoch + 1}, "
                 f"Training Loss: {training_loss.result()}, "
-                f"Training Accuracy: {training_accuracy.result() * 100}, "
+                f"Training Accuracy: {training_accuracy.result() * 100}"
             )
 
         self.is_trained = True
