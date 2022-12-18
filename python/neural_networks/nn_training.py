@@ -59,7 +59,6 @@ class NNTraining:
         _training_data: np.ndarray,
         _training_labels: np.ndarray,
     ) -> None:
-
         for epoch in range(self._epochs):
             # Reset the metrics at the start of the next epoch
             train_loss.reset_states()
@@ -79,7 +78,9 @@ class NNTraining:
                     2,
                 )
                 training_step(
-                    self._model, small_training_data, small_training_labels_as_one_hot
+                    self._model,
+                    small_training_data,
+                    small_training_labels_as_one_hot,
                 )
 
             # for test_images, test_labels in test_ds:
@@ -92,3 +93,5 @@ class NNTraining:
                 # f"Test Loss: {test_loss.result()}, "
                 # f"Test Accuracy: {test_accuracy.result() * 100}"
             )
+
+            self._model.save("../saved_models/model.h5")
