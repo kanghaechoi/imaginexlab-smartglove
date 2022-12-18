@@ -92,4 +92,5 @@ class NNTraining:
                 # f"Test Accuracy: {test_accuracy.result() * 100}"
             )
 
+        breakpoint()
         self._model.save("../saved_models/resnet50")
