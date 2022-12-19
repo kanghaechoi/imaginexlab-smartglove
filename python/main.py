@@ -162,11 +162,11 @@ if __name__ == "__main__":
     resnet = ResNet(resnet_block_parameters, number_of_classes)
 
     adam_optimizer = tf.keras.optimizers.Adam(learning_rate=0.0001)
-    rms_prop_optimizer = tf.keras.optimizers.RMSprop
+    rms_prop_optimizer = tf.keras.optimizers.RMSprop(learning_rate=0.0001)
 
     nn_training = NNTraining(
         resnet,
-        adam_optimizer,
+        rms_prop_optimizer,
         epochs,
         batch_size,
         saved_models_path,
