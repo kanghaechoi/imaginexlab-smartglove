@@ -27,6 +27,7 @@ class Divide:
 
         number_of_test_dataset = math.floor(number_of_data * test_dataset_ratio)
 
+        np.random.seed(seed=192)
         self.test_index = np.random.choice(number_of_data, number_of_test_dataset)
         self.training_index = np.delete(self.all_index, self.test_index, axis=None)
 
