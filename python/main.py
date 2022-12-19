@@ -27,20 +27,23 @@ if __name__ == "__main__":
     """
     Data fetch configuration
     """
-    age_20s: int = 20
-    age_50s: int = 50
-    age_70s: int = 70
-
-    is_not_authorized: int = 0
-    is_authorized: int = 1
-
     if research_question == 1:
-        ages = [age_20s, age_50s, age_70s]
+        subject_age1: int = 20
+        subject_age2: int = 50
+        subject_age3: int = 70
+
+        ages = [subject_age1, subject_age2, subject_age3]
+
         authentication_classes = None
         authentication_flag: bool = False
         number_of_classes = len(ages)
     elif research_question == 2 or research_question == 3:
-        ages = [age_20s]
+        subject_age1 = 20
+
+        is_not_authorized: int = 0
+        is_authorized: int = 1
+
+        ages = [subject_age1]
         authentication_classes = [is_authorized, is_not_authorized]
         authentication_flag: bool = True
         number_of_classes = len(authentication_classes)
@@ -50,7 +53,10 @@ if __name__ == "__main__":
     """
     Data fetch
     """
-    sample_length: int = 50
+    # sample_length = input("Please insert sample length. (1 sample length = 1/100 sec)")
+    # sample_length = int(sample_length)
+    sample_length: int = 50  # 0.5 Seconds
+
     fetch = Fetcher(
         research_question,
         ages,
@@ -151,7 +157,7 @@ if __name__ == "__main__":
         resnet_block_parameters: list = [3, 8, 36, 3]
         saved_models_path: str = "./python/saved_models/resnet152"
     else:
-        ValueError()
+        raise ValueError
 
     resnet = ResNet(resnet_block_parameters, number_of_classes)
 

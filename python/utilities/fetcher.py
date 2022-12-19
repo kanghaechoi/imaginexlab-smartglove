@@ -63,34 +63,6 @@ class Fetcher:
         self.authentication_flag = _authentication_flag
         self.authentication_classes = _authentication_classes
 
-    def _parsee_txt_data(self, txt_file_path: str) -> list:
-        with open(txt_file_path, "r") as file:
-            data = []
-            buffer = []
-
-            previous_z_axis_euler_angle = 0
-            current_z_axis_euler_angle = 0
-
-            for index, row in enumerate(file):
-                if index > 5:
-                    row_data = row.split()
-                    current_z_axis_euler_angle = float(row_data[0])
-
-                    if (
-                        abs(current_z_axis_euler_angle + previous_z_axis_euler_angle)
-                        <= 2
-                        and len(buffer) != 0
-                    ):
-                        data.append(buffer)
-                        buffer = []
-                        previous_z_axis_euler_angle = current_z_axis_euler_angle
-
-                    buffer.append(row_data)
-                else:
-                    continue
-
-        return data
-
     def _parse_txt_data(self, txt_file_path: str) -> list:
         with open(txt_file_path, "r") as file:
             data = []
