@@ -55,7 +55,8 @@ if __name__ == "__main__":
     """
     # sample_length = input("Please insert sample length. (1 sample length = 1/100 sec)")
     # sample_length = int(sample_length)
-    sample_length: int = 50  # 0.5 Seconds
+    # sample_length: int = 50  # 0.5 Seconds
+    sample_length: int = 100  # 1 Second
 
     fetch = Fetcher(
         research_question,
